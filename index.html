@@ -206,7 +206,7 @@
 
             // 计算字体大小
             const fontSize = Math.max(canvas.width * 0.017, 12); // 原字号再减小15%
-            const logoHeight = fontSize * (4 / 3); // 增大Logo高度比例为4/3
+            const logoHeight = fontSize * 2; // 将Logo高度设置为文字高度的两倍
 
             // 绘制“photo by”文本
             ctx.font = `700 ${fontSize}px WixFont`; // 字重700
@@ -223,18 +223,8 @@
 
                 // 绘制手机型号文本
                 ctx.font = `700 ${fontSize}px WixFont`; // 字重700
-                ctx.textAlign = "left"; // 设置文本对齐方式
                 const phoneX = logoX + logoWidth + 15; // 手机型号的X坐标，增加左边距
                 ctx.fillText(phone, phoneX, canvas.height - paddingBottom);
-
-                // 增加字间距
-                const letterSpacing = 2; // 设置字间距
-                ctx.save();
-                ctx.translate(phoneX, canvas.height - paddingBottom);
-                for (let i = 0; i < phone.length; i++) {
-                    ctx.fillText(phone[i], i * (fontSize + letterSpacing), 0);
-                }
-                ctx.restore();
 
                 if (showParameters) {
                     // 绘制拍摄参数
