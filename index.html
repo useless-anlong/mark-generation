@@ -86,7 +86,7 @@
 
         <div class="input-group">
             <label for="phone">手机型号：</label>
-            <input type="text" id="phone" placeholder="请输入机型" value="REDMI K60">
+            <input type="text" id="phone" placeholder="请输入机型" value="K80 Pro">
 
             <label for="focal">焦距(mm)：</label>
             <input type="number" id="focal" step="0.1" value="25">
@@ -103,16 +103,16 @@
 
         <div class="input-group">
             <label for="paddingTop">上边距(px)：</label>
-            <input type="number" id="paddingTop" value="20">
+            <input type="number" id="paddingTop" value="96">
 
             <label for="paddingBottom">下边距(px)：</label>
-            <input type="number" id="paddingBottom" value="20">
+            <input type="number" id="paddingBottom" value="96">
 
             <label for="paddingLeft">左边距(px)：</label>
-            <input type="number" id="paddingLeft" value="20">
+            <input type="number" id="paddingLeft" value="96">
 
             <label for="paddingRight">右边距(px)：</label>
-            <input type="number" id="paddingRight" value="20">
+            <input type="number" id="paddingRight" value="96">
         </div>
 
         <div class="input-group">
@@ -205,8 +205,8 @@
             ctx.fillStyle = 'white';
 
             // 计算字体大小
-            const fontSize = Math.max(canvas.width * 0.025, 16); // 基于图像宽度计算字号
-            const logoHeight = fontSize; // Logo高度与文本高度相同
+            const fontSize = Math.max(canvas.width * 0.02, 14); // 调整字号
+            const logoHeight = fontSize * (2 / 3); // Logo高度与文本高度的比例调整为2/3
 
             // 绘制“photo by”文本
             ctx.font = `600 ${fontSize}px WixFont`; // 字重600
