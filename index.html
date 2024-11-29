@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>照片水印工具</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .preview-container {
+            margin: 20px 0;
+            text-align: center;
+            position: relative;
+        }
+        #finalCanvas {
+            display: none;
+            max-width: 100%;
+            height: auto;
+        }
+        #downloadImage {
+            display: none;
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .save-tip {
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+            display: none;
+        }
+        .logo {
+            width: 50px; /* 设置合适的宽度 */
+            height: auto;
+            vertical-align: middle; /* 使图片与文本对齐 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>照片水印工具</h1>
+
+        <div class="input-group">
+            <label for="photo">选择照片：</label>
+            <input type="file" id="photo" accept="image/*">
+        </div>
+
+        <div class="input-group">
+            <label for="phone">手机型号：</label>
+            <input type="text" id="phone" placeholder="请输入机型" value="REDMI K60">
+
+            <label for="focal">焦距(mm)：</label>
+            <input type="number" id="focal" step="0.1" value="25">
+
+            <label for="aperture">光圈：</label>
+            <input type="text" id="aperture" placeholder="例如：1.79" value="1.79">
+
+            <label for="shutter">快门速度：</label>
+            <input type="text" id="shutter" placeholder="例如：1/329" value="1/329">
+
+            <label for="iso">ISO：</label>
+            <input type="number" id="iso" value="50">
+        </div>
+
+        <div class="input-group">
+            <label for="paddingTop">上边距(px)：</label>
+            <input type="number" id="paddingTop" value="20">
+
+            <label for="paddingBottom">下边距(px)：</label>
+            <input type="number" id="paddingBottom" value="20">
+
+            <label for="paddingLeft">左边距(px)：</label>
+            <input type="number" id="paddingLeft" value="20">
+
+            <label for="paddingRight">右边距(px)：</label>
+            <input type="number" id="paddingRight" value="20">
+        </div>
+
+        <div class="input-group">
+            <label>
+                <input type="checkbox" id="showParameters" checked> 显示拍摄参数
+            </label>
+        </div>
+
+        <button onclick="processImage()">生成水印</button>
+        <button onclick="saveImage()" id="saveBtn" style="display: none;">保存图片</button>
+
+        <div class="preview-container">
+            <div id="preview-container">
+                <canvas id="finalCanvas"></canvas>
+            </div>
+            <p class="save-tip" id="saveTip">长按图片可保存到相册</p>
+            <img id="downloadImage" alt="处理后的图片">
+        </div>
+    </div>
+
+    <script>
+        let originalImage = null;
+
+        window.onload = function() {
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const saveTip = document.getElementById('saveTip');
+            if (isMobile) {
+                saveTip.textContent = '长按图片可保存到相册';
+            } else {
+                saveTip.textContent = '点击"保存图片"按钮下载';
+            }
+
+            // 添加事件监听器
+            const inputFields = ['phone', 'focal', 'aperture', 'shutter', 'iso', 'paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight', 'showParameters'];
+            inputFields.forEach(id => {
+                const input = document.getElementById(id);
+                input.addEventListener('input', drawImageWithWatermark);
+            });
+        };
+
+        function processImage() {
+            const photoInput = document.getElementById('photo');
+            const file = photoInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    originalImage = new Image();
+                    originalImage.onload = drawImageWithWatermark;
+                    originalImage.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('请先选择一张照片！');
+            }
+        }
+
+        function drawImageWithWatermark() {
+            if (!originalImage) return; // 确保原始图片已加载
+
+            const canvas = document.getElementById('finalCanvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = originalImage.width;
+            canvas.height = originalImage.height;
+
+            ctx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
+
+            // 获取边距设置
+            const paddingTop = parseInt(document.getElementById('paddingTop').value, 10);
+            const paddingBottom = parseInt(document.getElementById('paddingBottom').value, 10);
+            const paddingLeft = parseInt(document.getElementById('paddingLeft').value, 10);
+            const paddingRight = parseInt(document.getElementById('paddingRight').value, 10);
+            const showParameters = document.getElementById('showParameters').checked;
+
+            const phone = document.getElementById('phone').value;
+            const focal = document.getElementById('focal').value;
+            const aperture = document.getElementById('aperture').value;
+            const shutter = document.getElementById('shutter').value;
+            const iso = document.getElementById('iso').value;
+
+            ctx.fillStyle = 'white';
+            const fontSize = Math.max(canvas.width * 0.015, 14);
+            ctx.font = `${fontSize}px Arial`;
+
+            const leftText = "photo by ";
+            const rightText = showParameters ? `${focal}mm | f/${aperture} | ${shutter}s | ISO${iso}` : '';
+
+            // 绘制水印文本
+            ctx.fillText(leftText, paddingLeft, canvas.height - paddingBottom); // 左侧对齐
+
+            // 绘制Redmi Logo
+            const logo = new Image();
+            logo.src = './redmi-new-logo.png';
+            logo.onload = function() {
+                const logoWidth = 50; // 设置Logo宽度
+                const logoHeight = logo.height * (logoWidth / logo.width); // 计算高度以保持比例
+                const logoX = paddingLeft + ctx.measureText(leftText).width + 5; // Logo的X坐标
+
+                ctx.drawImage(logo, logoX, canvas.height - paddingBottom - logoHeight, logoWidth, logoHeight);
+
+                // 绘制手机型号文本
+                const phoneX = logoX + logoWidth + 5; // 手机型号的X坐标
+                ctx.fillText(phone, phoneX, canvas.height - paddingBottom);
+
+                if (showParameters) {
+                    const rightTextX = canvas.width - ctx.measureText(rightText).width - paddingRight; // 右侧对齐
+                    ctx.fillText(rightText, rightTextX, canvas.height - paddingBottom);
+                }
+
+                const downloadImage = document.getElementById('downloadImage');
+                downloadImage.src = canvas.toDataURL('image/jpeg', 0.9);
+                downloadImage.style.display = 'block';
+                
+                document.getElementById('saveTip').style.display = 'block';
+                document.getElementById('saveBtn').style.display = 'inline-block';
+                
+                canvas.style.display = 'none';
+            };
+        }
+
+        function saveImage() {
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+            if (isMobile) {
+                alert('请长按图片选择"保存图片"或"存储图像"');
+                return;
+            }
+
+            const downloadImage = document.getElementById('downloadImage');
+            const link = document.createElement('a');
+            link.download = 'watermarked_photo.jpg';
+            link.href = downloadImage.src;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
