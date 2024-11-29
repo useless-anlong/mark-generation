@@ -152,6 +152,14 @@
                 const input = document.getElementById(id);
                 input.addEventListener('input', drawImageWithWatermark);
             });
+
+            // 加载字体
+            const fontWix = new FontFace('WixFont', 'url(wix_madefor_display.ttf)');
+            const fontJetBrains = new FontFace('JetBrainsMono', 'url(jet_brains_mono.ttf)');
+            Promise.all([fontWix.load(), fontJetBrains.load()]).then(function(fonts) {
+                document.fonts.add(fonts[0]);
+                document.fonts.add(fonts[1]);
+            });
         };
 
         function processImage() {
@@ -196,32 +204,39 @@
             const iso = document.getElementById('iso').value;
 
             ctx.fillStyle = 'white';
-            const fontSize = Math.max(canvas.width * 0.015, 14);
-            ctx.font = `${fontSize}px Arial`;
 
-            const leftText = "photo by ";
-            const rightText = showParameters ? `${focal}mm | f/${aperture} | ${shutter}s | ISO${iso}` : '';
-
-            // 绘制水印文本
-            ctx.fillText(leftText, paddingLeft, canvas.height - paddingBottom); // 左侧对齐
+            // 绘制“photo by”文本
+            ctx.font = '550 24px WixFont';
+            ctx.fillText("photo by ", paddingLeft, canvas.height - paddingBottom);
 
             // 绘制Redmi Logo
             const logo = new Image();
-            logo.src = './redmi-new-logo.png';
+            logo.src = 'redmi-new-logo.png';
             logo.onload = function() {
-                const logoWidth = 50; // 设置Logo宽度
+                const logoWidth = 196; // 设置Logo宽度
                 const logoHeight = logo.height * (logoWidth / logo.width); // 计算高度以保持比例
-                const logoX = paddingLeft + ctx.measureText(leftText).width + 5; // Logo的X坐标
+                const logoX = paddingLeft + ctx.measureText("photo by ").width + 5; // Logo的X坐标
 
                 ctx.drawImage(logo, logoX, canvas.height - paddingBottom - logoHeight, logoWidth, logoHeight);
 
                 // 绘制手机型号文本
+                ctx.font = '600 24px WixFont';
                 const phoneX = logoX + logoWidth + 5; // 手机型号的X坐标
                 ctx.fillText(phone, phoneX, canvas.height - paddingBottom);
 
                 if (showParameters) {
-                    const rightTextX = canvas.width - ctx.measureText(rightText).width - paddingRight; // 右侧对齐
-                    ctx.fillText(rightText, rightTextX, canvas.height - paddingBottom);
+                    // 绘制拍摄参数
+                    ctx.font = '400 20px JetBrainsMono'; // 使用JetBrains Mono字体
+                    const params = `${focal}mm | f/${aperture} | ${shutter}s | ISO${iso}`;
+                    const rightTextX = canvas.width - ctx.measureText(params).width - paddingRight; // 右侧对齐
+
+                    // 绘制分隔符
+                    ctx.globalAlpha = 0.4; // 设置透明度
+                    const separatorX = rightTextX - 10; // 分隔符的X坐标
+                    ctx.fillText("|", separatorX, canvas.height - paddingBottom);
+                    ctx.globalAlpha = 0.6; // 设置参数文本透明度
+                    ctx.fillText(params, rightTextX, canvas.height - paddingBottom);
+                    ctx.globalAlpha = 1; // 恢复默认透明度
                 }
 
                 const downloadImage = document.getElementById('downloadImage');
