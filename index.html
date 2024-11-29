@@ -70,7 +70,6 @@
             display: none;
         }
         .logo {
-            width: 50px; /* 设置合适的宽度 */
             height: auto;
             vertical-align: middle; /* 使图片与文本对齐 */
         }
@@ -205,28 +204,32 @@
 
             ctx.fillStyle = 'white';
 
+            // 计算字体大小
+            const fontSize = Math.max(canvas.width * 0.025, 16); // 基于图像宽度计算字号
+            const logoHeight = fontSize; // Logo高度与文本高度相同
+
             // 绘制“photo by”文本
-            ctx.font = '550 24px WixFont';
+            ctx.font = `600 ${fontSize}px WixFont`; // 字重600
             ctx.fillText("photo by ", paddingLeft, canvas.height - paddingBottom);
 
             // 绘制Redmi Logo
             const logo = new Image();
             logo.src = 'redmi-new-logo.png';
             logo.onload = function() {
-                const logoWidth = 196; // 设置Logo宽度
-                const logoHeight = logo.height * (logoWidth / logo.width); // 计算高度以保持比例
+                const logoWidth = logo.width * (logoHeight / logo.height); // 计算Logo宽度以保持比例
                 const logoX = paddingLeft + ctx.measureText("photo by ").width + 5; // Logo的X坐标
 
                 ctx.drawImage(logo, logoX, canvas.height - paddingBottom - logoHeight, logoWidth, logoHeight);
 
                 // 绘制手机型号文本
-                ctx.font = '600 24px WixFont';
+                ctx.font = `600 ${fontSize}px WixFont`; // 字重600
                 const phoneX = logoX + logoWidth + 5; // 手机型号的X坐标
                 ctx.fillText(phone, phoneX, canvas.height - paddingBottom);
 
                 if (showParameters) {
                     // 绘制拍摄参数
-                    ctx.font = '400 20px JetBrainsMono'; // 使用JetBrains Mono字体
+                    const paramsFontSize = fontSize * 0.8; // 参数字体比机型小一些
+                    ctx.font = `400 ${paramsFontSize}px JetBrainsMono`; // 使用JetBrains Mono字体，字重400
                     const params = `${focal}mm | f/${aperture} | ${shutter}s | ISO${iso}`;
                     const rightTextX = canvas.width - ctx.measureText(params).width - paddingRight; // 右侧对齐
 
