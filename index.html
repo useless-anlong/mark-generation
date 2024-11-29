@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: sans-serif;
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
@@ -14,9 +14,9 @@
         }
         .container {
             background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 14px;
+            border-radius: 18px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.07);
         }
         .preview-container {
             margin: 20px 0;
@@ -52,16 +52,19 @@
             border-radius: 4px;
         }
         button {
-            background-color: #4CAF50;
+            background-color: #5087c8;
             color: white;
-            padding: 10px 20px;
+            padding: 14px 24px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            margin: 5px;
+            margin: 0px;
+            transition: all 0.25s;
+            box-shadow: 0 0px 0px rgba(0,0,0,0.07);
         }
         button:hover {
-            background-color: #45a049;
+            background-color: #4c95eb;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.07);
         }
         .save-tip {
             margin-top: 10px;
@@ -206,7 +209,7 @@
 
             // 计算字体大小
             const fontSize = Math.max(canvas.width * 0.017, 12); // 原字号再减小15%
-            const logoHeight = fontSize * 2; // 将Logo高度设置为文字高度的两倍
+            const logoHeight = fontSize * 1.05; // 将Logo高度设置为文字高度的两倍
 
             // 绘制“photo by”文本
             ctx.font = `700 ${fontSize}px WixFont`; // 字重700
