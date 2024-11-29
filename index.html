@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <title>照片水印工具</title>
+    <title>REDMI 照片水印生成</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -205,7 +205,7 @@
             ctx.fillStyle = 'white';
 
             // 计算字体大小
-            const fontSize = Math.max(canvas.width * 0.02, 14); // 调整字号
+            const fontSize = Math.max(canvas.width * 0.017, 12); // 原字号再减小15%
             const logoHeight = fontSize * (2 / 3); // Logo高度与文本高度的比例调整为2/3
 
             // 绘制“photo by”文本
@@ -223,12 +223,12 @@
 
                 // 绘制手机型号文本
                 ctx.font = `600 ${fontSize}px WixFont`; // 字重600
-                const phoneX = logoX + logoWidth + 5; // 手机型号的X坐标
+                const phoneX = logoX + logoWidth + 15; // 手机型号的X坐标，增加左边距
                 ctx.fillText(phone, phoneX, canvas.height - paddingBottom);
 
                 if (showParameters) {
                     // 绘制拍摄参数
-                    const paramsFontSize = fontSize * 0.8; // 参数字体比机型小一些
+                    const paramsFontSize = fontSize * 0.7; // 拍摄参数字号比机型小30%
                     ctx.font = `400 ${paramsFontSize}px JetBrainsMono`; // 使用JetBrains Mono字体，字重400
                     const params = `${focal}mm | f/${aperture} | ${shutter}s | ISO${iso}`;
                     const rightTextX = canvas.width - ctx.measureText(params).width - paddingRight; // 右侧对齐
